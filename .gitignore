@@ -24,7 +24,6 @@ tmp*
 *.pickle
 *.pyc
 *.avi
-*.gif
 *.pth
 *.zip
 
