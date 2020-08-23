@@ -44,7 +44,7 @@ def _set_config():
     # For tf 1.13.1, The following setting is needed
     import tensorflow as tf
     from tensorflow import keras
-    config = tf.ConfigProto()
+    config =  tf.compat.v1.ConfigProto()
     config.gpu_options.allow_growth = True
     config.gpu_options.per_process_gpu_memory_fraction=MAX_FRACTION_OF_GPU_TO_USE
     return config

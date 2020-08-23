@@ -5,19 +5,18 @@
 #     In src/s2_put_skeleton_txts_to_a_single_txt.py,
 #     The image whose label is not in `classes` will be filtered out. 
 
-classes: ['stand', 'walk', 'run', 'jump', 'sit', 'squat', 'kick', 'punch', 'wave']
-#classes: ['lying', 'other', 'sitting', 'standing']
+classes: ['chudan', 'suburi']
 
 image_filename_format: "{:05d}.jpg"
 skeleton_filename_format: "{:05d}.txt"
 
 features:
-  window_size: 5 # Number of adjacent frames for extracting features. 
+  window_size: 5 # Number of adjacent frames for extracting features.
 
 s1_get_skeletons_from_training_imgs.py:
   openpose:
     model: cmu # cmu or mobilenet_thin. "cmu" is more accurate but slower.
-    img_size: 656x368 #  656x368, or 432x368, 336x288. Bigger is more accurate.
+    img_size: 640x368 #  656x368, or 432x368, 336x288. Bigger is more accurate.
   input:
     images_description_txt: data/source_images3/valid_images.txt
     images_folder: data/source_images3/
@@ -67,7 +66,7 @@ s5_test.py:
 
     openpose:
       model: mobilenet_thin
-      img_size: 656x368
+      img_size: 640x368
       # model: cmu
       # img_size: 432x368
 
@@ -76,5 +75,5 @@ s5_test.py:
   
   output:
     video_name: "video.avi" # save the resultant video to file
-    video_fps: 10.0 # at what frame rate to write the output video
+    video_fps: 24 # at what frame rate to write the output video
     skeleton_folder_name: "skeletons/"

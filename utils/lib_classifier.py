@@ -120,6 +120,9 @@ class ClassifierOfflineTrain(object):
         return Y_probs  # np.array with a length of len(classes)
 
 
+
+
+
 class ClassifierOnlineTest(object):
     ''' Classifier for online inference.
         The input data to this classifier is the raw skeleton data, so they
@@ -214,3 +217,5 @@ class ClassifierOnlineTest(object):
             cv2.putText(img_disp, text=s, org=(TXT_X, TXT_Y),
                         fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=FONT_SIZE,
                         color=(0, 0, int(COLOR_INTENSITY)), thickness=2)
+
+

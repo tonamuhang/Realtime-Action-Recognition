@@ -54,7 +54,7 @@ if True:  # Include project path
     import utils.lib_images_io as lib_images_io
     import utils.lib_plot as lib_plot
     import utils.lib_commons as lib_commons
-    from utils.lib_openpose import SkeletonDetector
+    from utils.lib_openpose import SkeletonDetector, _get_input_img_size_from_string
     from utils.lib_tracker import Tracker
     from utils.lib_tracker import Tracker
     from utils.lib_classifier import ClassifierOnlineTest
@@ -161,6 +161,7 @@ OPENPOSE_IMG_SIZE = cfg["settings"]["openpose"]["img_size"]
 
 # Display settings
 img_disp_desired_rows = int(cfg["settings"]["display"]["desired_rows"])
+
 
 
 # -- Function
@@ -307,6 +308,14 @@ def get_the_skeleton_data_to_save_to_disk(dict_id2skeleton):
     return skels_to_save
 
 
+def draw_counter_onto_image(image_disp, c):
+    s = "Count: " + str(c)
+    cv2.putText(image_disp, text=s, org=(0, _get_input_img_size_from_string(OPENPOSE_IMG_SIZE)[1]),
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7,
+                color=(0, 0, 255), thickness=2)
+    return image_disp
+
+
 # -- Main
 if __name__ == "__main__":
 
@@ -332,9 +341,13 @@ if __name__ == "__main__":
     video_writer = lib_images_io.VideoWriter(
         DST_FOLDER + DST_VIDEO_NAME, DST_VIDEO_FPS)
 
+    # Suburi count
+    count = 0
+    suburi_ready = False
     # -- Read images and process
     try:
         ith_img = -1
+        previous_state = ''
         while images_loader.has_image():
 
             # -- Read image
@@ -356,10 +369,23 @@ if __name__ == "__main__":
             if len(dict_id2skeleton):
                 dict_id2label = multiperson_classifier.classify(
                     dict_id2skeleton)
-
             # -- Draw
             img_disp = draw_result_img(img_disp, ith_img, humans, dict_id2skeleton,
                                        skeleton_detector, multiperson_classifier)
+
+            classifier_of_a_person = multiperson_classifier.get_classifier(
+                id='min')
+
+            if classifier_of_a_person is not None and classifier_of_a_person.scores is not None:
+                print('Chudan prob is ' + str(classifier_of_a_person.scores[0]))
+                if 0.05 > (classifier_of_a_person.scores[0] - 0.95) > 0:
+                    suburi_ready = True
+                if suburi_ready and classifier_of_a_person.scores[1] > 0.7:
+                    count += 1
+                    suburi_ready = False
+
+            # -- Draw counter
+            img_disp = draw_counter_onto_image(img_disp, count)
 
             # Print label of a person
             if len(dict_id2skeleton):
